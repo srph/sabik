@@ -12,7 +12,7 @@ interface IAppState {
 
 class App extends React.Component<{}, IAppState> {
   state: IAppState = {
-    navigationIndex: 2
+    navigationIndex: 1
   }
 
   render(): JSX.Element | boolean {

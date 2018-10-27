@@ -7,7 +7,7 @@ ui.Container = styled.div`
   align-items: center;
   justify-content: space-between;
   height: 60px;
-  padding: 0 16px;
+  padding: 0 8px;
 `
 ui.Section = styled.button`
   width: 33.33%;
@@ -32,11 +32,11 @@ ui.SectionIcon = styled.div`
   font-size: 24px;
 
   &:first-child {
-    margin-right: 16px;
+    margin-right: 8px;
   }
 
   &:last-child {
-    margin-left: 16px;
+    margin-left: 8px;
   }
 `
 
