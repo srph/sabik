@@ -1,5 +1,5 @@
 import * as React from 'react'
-import styled, {css} from 'styled-components'
+import styled, { css } from 'styled-components'
 // import s from '@app/styles'
 import * as moment from 'moment'
 import UiContainer from '@app/components/UiContainer'
@@ -15,9 +15,11 @@ const sv = {
 const ui = {} as any
 ui.TimeSlot = styled.div`
   display: flex;
-  ${(props: any) => props.isPast && css`
-    opacity: 0.3;
-  `}
+  ${(props: any) =>
+    props.isPast &&
+    css`
+      opacity: 0.3;
+    `};
 `
 ui.TimeSlotSheet = styled.div`
   flex-shrink: 0;
@@ -36,11 +38,13 @@ ui.TimeSlotCards = styled.div`
   padding-top: 16px;
   padding-bottom: 8px;
   padding-left: 20px;
-  padding-right: 16px;
   border-bottom: 2px solid #ddd;
   width: 100%;
 `
 ui.TimeSlotCardsItem = styled.div`
+  padding-right: 16px;
+`
+ui.TimeSlotCardsItemInner = styled.div`
   position: relative;
   flex-shrink: 0;
   padding: 16px;
@@ -50,28 +54,24 @@ ui.TimeSlotCardsItem = styled.div`
   background: #ece7fe;
   border-radius: 4px;
 
-  &:not(:last-child) {
-    margin-right: 16px;
-  }
+  ${(props: any) =>
+    props.type === 'break' &&
+    css`
+      background: repeating-linear-gradient(45deg, #e5e7ec, #e5e7ec 10px, transparent 10px, transparent 20px);
+      border-radius: 0;
+    `}
 
-  ${(props: any) => props.type === 'break' && css`
-    background: repeating-linear-gradient(
-      45deg,
-      #e5e7ec,
-      #e5e7ec 10px,
-      transparent 10px,
-      transparent 20px
-    );
-    border-radius: 0;
-  `}
+  ${(props: any) =>
+    props.type === 'celebration' &&
+    css`
+      background: linear-gradient(#75ffbf, #c8ffbb);
+    `}
 
-  ${(props: any) => props.type === 'celebration' && css`
-    background: linear-gradient(#75ffbf, #c8ffbb);
-  `}
-
-  ${(props: any) => props.type === 'activity' && css`
-    background: linear-gradient(#75acff,#bbf9ff);
-  `}
+  ${(props: any) =>
+    props.type === 'activity' &&
+    css`
+      background: linear-gradient(#75acff, #bbf9ff);
+    `}
 `
 ui.TimeSlotCardsItemTitle = styled.h6`
   margin: 0;
@@ -81,13 +81,15 @@ ui.TimeSlotCardsItemTitle = styled.h6`
   letter-spacing: 2px;
   margin-bottom: 8px;
 
-  ${(props: any) => props.type === 'celebration' && css`
-    color: #54b596;
-  `}
-
-  ${(props: any) => props.type === 'activity' && css`
-    color: #fff;
-  `}
+  ${(props: any) =>
+    props.type === 'celebration' &&
+    css`
+      color: #54b596;
+    `} ${(props: any) =>
+    props.type === 'activity' &&
+    css`
+      color: #fff;
+    `};
 `
 ui.TimeSlotCardsItemDescription = styled.p`
   margin: 0;
@@ -95,7 +97,6 @@ ui.TimeSlotCardsItemDescription = styled.p`
   font-size: 18px;
   min-height: 45px;
   margin-bottom: 16px;
-
 `
 ui.TimeSlotCardsItemCategory = styled.div`
   display: flex;
@@ -110,7 +111,7 @@ ui.TimeSlotCardsItemCategoryText = styled.span`
   font-size: 10px;
   color: #868fb7;
   text-transform: uppercase;
-  white-space: nowrap; 
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 `
@@ -178,18 +179,21 @@ class Day2Screen extends React.Component<IUiTimeSheetProps, {}> {
 
           return (
             <UiContainer>
-              <UiNavigation index={this.props.navigationIndex} onChange={this.props.onNavigationChange} onScrollToActiveTime={this.handleScrollToActiveTime} />
+              <UiNavigation
+                index={this.props.navigationIndex}
+                onChange={this.props.onNavigationChange}
+                onScrollToActiveTime={this.handleScrollToActiveTime}
+              />
 
               {this.props.data.map((timeSlot, i) => {
                 const startTime = moment(`${date} ${timeSlot.startTime}`, 'MM/DD/YYYY h:mm a')
                 const endTime = moment(`${date} ${timeSlot.endTime || '11:59 PM'}`, 'MM/DD/YYYY h:mm a')
                 const duration = moment.duration(endTime.diff(startTime)).asHours()
-                const timeHeight = timeSlot.endTime == null
-                  ? sv.TIME_SLOT_HEIGHT
-                  : sv.TIME_SLOT_HEIGHT * Math.max(1, duration)
-                
+                const timeHeight =
+                  timeSlot.endTime == null ? sv.TIME_SLOT_HEIGHT : sv.TIME_SLOT_HEIGHT * Math.max(1, duration)
+
                 return (
-                  <ui.TimeSlot isPast={now > endTime} key={i} innerRef={(c: HTMLElement) => this.slotElement[i] = c}>
+                  <ui.TimeSlot isPast={now > endTime} key={i} innerRef={(c: HTMLElement) => (this.slotElement[i] = c)}>
                     <ui.TimeSlotSheet>
                       {timeSlot.startTime}
                       <br />
@@ -198,19 +202,28 @@ class Day2Screen extends React.Component<IUiTimeSheetProps, {}> {
 
                     <ui.TimeSlotCards>
                       {timeSlot.cards.map((card, j) => (
-                        <ui.TimeSlotCardsItem type={card.type} height={timeHeight} key={j}>
-                          {Boolean(card.group) && <ui.TimeSlotCardsItemGroup src={`/img/${card.group === 'kier' ? 'me.png' : 'dad.jpg'}`} alt="Kier's photo" />}
+                        <ui.TimeSlotCardsItem>
+                          <ui.TimeSlotCardsItemInner type={card.type} height={timeHeight} key={j}>
+                            {Boolean(card.group) && (
+                              <ui.TimeSlotCardsItemGroup
+                                src={`/img/${card.group === 'kier' ? 'me.png' : 'dad.jpg'}`}
+                                alt="Kier's photo"
+                              />
+                            )}
 
-                          <ui.TimeSlotCardsItemTitle type={card.type}>{card.title}</ui.TimeSlotCardsItemTitle>
-                          <ui.TimeSlotCardsItemDescription type={card.type}>{card.description}</ui.TimeSlotCardsItemDescription>
+                            <ui.TimeSlotCardsItemTitle type={card.type}>{card.title}</ui.TimeSlotCardsItemTitle>
+                            <ui.TimeSlotCardsItemDescription type={card.type}>
+                              {card.description}
+                            </ui.TimeSlotCardsItemDescription>
 
-                          <ui.TimeSlotCardsItemCategory>
-                            <ui.TimeSlotCardsItemCategoryIcon>
-                              {card.categoryIcon}
-                            </ui.TimeSlotCardsItemCategoryIcon>
+                            <ui.TimeSlotCardsItemCategory>
+                              <ui.TimeSlotCardsItemCategoryIcon>{card.categoryIcon}</ui.TimeSlotCardsItemCategoryIcon>
 
-                            <ui.TimeSlotCardsItemCategoryText dangerouslySetInnerHTML={{ __html: card.categoryText }} />
-                          </ui.TimeSlotCardsItemCategory>
+                              <ui.TimeSlotCardsItemCategoryText
+                                dangerouslySetInnerHTML={{ __html: card.categoryText }}
+                              />
+                            </ui.TimeSlotCardsItemCategory>
+                          </ui.TimeSlotCardsItemInner>
                         </ui.TimeSlotCardsItem>
                       ))}
                     </ui.TimeSlotCards>
@@ -229,7 +242,7 @@ class Day2Screen extends React.Component<IUiTimeSheetProps, {}> {
   handleScrollToActiveTime = () => {
     const now = this.getNow()
 
-    const activeTimeSlotIndex = this.props.data.findIndex((data) => {
+    const activeTimeSlotIndex = this.props.data.findIndex(data => {
       return moment(`${this.getEventDate()} ${data.endTime || '11:59 PM'}`, 'MM/DD/YYYY h:mm a') > now
     })
 
